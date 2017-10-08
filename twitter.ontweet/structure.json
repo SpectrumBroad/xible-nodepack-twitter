@@ -1,0 +1,24 @@
+{
+  "name": "twitter.ontweet",
+  "type": "event",
+  "description": "Triggered whenever a tweet comes in on the given search tags.",
+  "inputs": {
+    "twitter": {
+  		"type": "twitter"
+  	}
+  },
+  "outputs": {
+    "trigger": {
+  		"type": "trigger"
+  	},
+    "tweet": {
+  		"type": "object"
+  	},
+    "text": {
+  		"type": "string"
+  	},
+    "username": {
+  		"type": "string"
+  	}
+  }
+}

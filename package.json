@@ -1,0 +1,12 @@
+{
+	"name": "xible-nodepack-twitter",
+	"version": "0.1.0",
+	"description": "Twitter nodes for XIBLE",
+
+	"dependencies": {
+		"twitter-ng": "*",
+		"express": "*",
+		"spdy": "*",
+		"body-parser": "*"
+	}
+}
