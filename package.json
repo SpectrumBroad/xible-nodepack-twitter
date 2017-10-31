@@ -2,7 +2,23 @@
 	"name": "xible-nodepack-twitter",
 	"version": "0.2.0",
 	"description": "Twitter nodes for XIBLE",
-
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spectrumbroad/xible-nodepack-twitter"
+  },
+  "bugs": {
+    "url": "https://github.com/spectrumbroad/xible-nodepack-twitter/issues",
+    "email": "bugs@xible.io"
+  },
+  "keywords": [
+    "xible",
+    "twitter",
+    "nodepack"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm shrinkwrap --only=prod"
+  },
 	"dependencies": {
 		"twitter-ng": "*",
 		"express": "*",
