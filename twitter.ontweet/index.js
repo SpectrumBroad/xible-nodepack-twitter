@@ -72,7 +72,19 @@ module.exports = (NODE) => {
           });
 
           stream.on('error', (tw, tc) => {
-            console.log(tw, tc);
+            let message = `${tw} ${tc}`;
+            if (
+              (tw === 'http' || tw === 'https') &&
+              (tc === 420 || tc === 429)
+            ) {
+              message = `to many requests: ${message}`;
+            }
+
+            rateLimitStatus = NODE.addStatus({
+              color: 'red',
+              message
+            });
+            console.error(tw, tc);
           });
 
           stream.on('end', () => {
