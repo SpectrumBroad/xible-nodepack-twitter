@@ -2,6 +2,6 @@
 <script>
 	document.querySelector('button')
 	.addEventListener('click', (event) => {
-		open(`https://${location.hostname}:9620/${this._id}/auth`);
+		open(`${location.protocol}//${location.hostname}:${location.port}/api/node-routes/${this._id}/auth`);
 	});
 </script>

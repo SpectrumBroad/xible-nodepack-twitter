@@ -16,13 +16,13 @@
     "twitter",
     "nodepack"
   ],
+  "engines": {
+    "xible": ">=0.12.0"
+  },
   "scripts": {
     "prepublishOnly": "npm shrinkwrap --only=prod"
   },
 	"dependencies": {
-		"twitter-ng": "*",
-		"express": "*",
-		"spdy": "*",
-		"body-parser": "*"
+		"twitter-ng": "*"
 	}
 }
