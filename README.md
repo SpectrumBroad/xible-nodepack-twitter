@@ -5,8 +5,13 @@ This is a nodepack for [XIBLE](https://xible.io), which provides Twitter functio
 - [XIBLE](https://xible.io)
 
 # Install
-<pre><code>xiblepm nodepack install twitter</code></pre>
+```
+xiblepm nodepack install twitter
+```
 Or use the editor.
 
 # Usage
-To authenticate against Twitter, ensure you have a saved flow with a &quot;twitter&quot; node in it. Start the flow, and hit the &quot;Authenticate&quot;-button on that node.
+
+## Authentication
+To authenticate against Twitter, ensure you have an app registered on https://developer.twitter.com or https://apps.twitter.com.
+Generate a consumer API key and access token + secret for use in the `twitter` node.

@@ -7,5 +7,5 @@
       "type": "twitter"
     }
   },
-  "vault": ["oAuthAccessToken", "oAuthAccessTokenSecret", "screenName"]
+  "vault": ["consumerKey", "consumerSecret", "accessToken", "accessTokenSecret", "screenName"]
 }

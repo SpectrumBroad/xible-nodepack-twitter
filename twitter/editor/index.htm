@@ -1,7 +1,24 @@
-<button type="button">Authenticate</button>
-<script>
-	document.querySelector('button')
-	.addEventListener('click', (event) => {
-		open(`${location.protocol}//${location.hostname}:${location.port}/api/node-routes/${this._id}/auth`);
-	});
-</script>
+<input
+	type="text"
+	data-output-value="consumerKey"
+	placeholder="consumer key"
+	required
+/>
+<input
+	type="password"
+	data-output-value="consumerSecret"
+	placeholder="consumer secret"
+	required
+/>
+<input
+	type="password"
+	data-output-value="accessToken"
+	placeholder="access token"
+	required
+/>
+<input
+	type="password"
+	data-output-value="accessTokenSecret"
+	placeholder="access token secret"
+	required
+/>

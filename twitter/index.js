@@ -2,18 +2,15 @@
 
 const TwitterNg = require('twitter-ng');
 
-const CONSUMER_KEY = 'BnQEOrezeCOwWAMOYGh5yVKIf';
-const CONSUMER_SECRET = 'zKYMMxP3G4tbgTg0108j1Ye8soUd4krqJIcAOeQYNK33CzQezH';
-
 module.exports = (NODE) => {
   let twitter;
 
   function connect() {
     twitter = new TwitterNg({
-      consumer_key: CONSUMER_KEY,
-      consumer_secret: CONSUMER_SECRET,
-      access_token_key: NODE.data.oAuthAccessToken,
-      access_token_secret: NODE.data.oAuthAccessTokenSecret
+      consumer_key: NODE.data.consumerKey,
+      consumer_secret: NODE.data.consumerSecret,
+      access_token_key: NODE.data.accessToken,
+      access_token_secret: NODE.data.accessTokenSecret
     });
 
     NODE.removeAllStatuses();
@@ -43,25 +40,29 @@ module.exports = (NODE) => {
 
       NODE.addStatus({
         color: 'green',
-        message: `connected as "${NODE.data.screenName}"`
+        message: `connected as "${data.screen_name}"`
       });
     });
   }
 
   // return reference glow
   const twitterOut = NODE.getOutputByName('twitter');
-  twitterOut.on('trigger', (conn, state, callback) => {
-    if (!twitter) {
-      NODE.once('init', () => callback(twitter));
-      return;
+  twitterOut.on('trigger', async (conn, state) => {
+    if (twitter) {
+      return twitter;
     }
 
-    callback(twitter);
+    return new Promise((resolve) => {
+      NODE.once('init', () => resolve(twitter));
+    });
   });
 
   NODE.on('init', () => {
     // if we have the oAuth keys, setup twitter right away
-    if (NODE.data.oAuthAccessToken && NODE.data.oAuthAccessTokenSecret) {
+    if (
+      NODE.data.consumerKey && NODE.data.consumerSecret &&
+      NODE.data.accessToken && NODE.data.accessTokenSecret
+    ) {
       connect();
     } else {
       NODE.addStatus({

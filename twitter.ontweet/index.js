@@ -8,94 +8,128 @@ module.exports = (NODE) => {
   const textOut = NODE.getOutputByName('text');
   const userNameOut = NODE.getOutputByName('username');
 
-  tweetOut.on('trigger', (conn, state, callback) => {
+  tweetOut.on('trigger', async (conn, state) => {
     const thisState = state.get(NODE);
-    callback((thisState && thisState.tweet) || null);
+    return (thisState && thisState.tweet) || null;
   });
 
-  textOut.on('trigger', (conn, state, callback) => {
+  textOut.on('trigger', async (conn, state) => {
     const thisState = state.get(NODE);
-    callback((thisState && thisState.tweet && thisState.tweet.text) || null);
+    return (thisState && thisState.tweet && thisState.tweet.text) || null;
   });
 
-  userNameOut.on('trigger', (conn, state, callback) => {
+  userNameOut.on('trigger', async (conn, state) => {
     const thisState = state.get(NODE);
-    callback((thisState && thisState.tweet && thisState.tweet.user && thisState.tweet.user.screen_name) || null);
+    return (thisState && thisState.tweet && thisState.tweet.user && thisState.tweet.user.screen_name) || null;
   });
 
-  NODE.on('init', (state) => {
+  function setupStream(state, twitter, track, follow) {
+    let rateLimitStatus;
+    let rateLimitTrack = 0;
+
+    twitter.stream('statuses/filter', {
+      track: track || undefined,
+      follow: follow || undefined
+    }, (stream) => {
+      stream.on('data', (data) => {
+        state.set(NODE, {
+          tweet: data
+        });
+        triggerOut.trigger(state);
+      });
+
+      // indicates that we're exceeding the rate limit set on streaming data
+      stream.on('limit', (data) => {
+        // this data is not in sync, so only apply highest limit
+        if (data.track <= rateLimitTrack) {
+          return;
+        }
+        rateLimitTrack = data.track;
+
+        if (rateLimitStatus) {
+          NODE.updateStatusById(rateLimitStatus, {
+            color: 'orange',
+            message: `ratelimit; missed ${rateLimitTrack} tweets`
+          });
+        } else {
+          rateLimitStatus = NODE.addStatus({
+            color: 'orange',
+            message: `ratelimit; missed ${rateLimitTrack} tweets`
+          });
+        }
+      });
+
+      stream.on('error', (tw, tc) => {
+        let message = `${tw} ${tc}`;
+        if (
+          (tw === 'http' || tw === 'https') &&
+          (tc === 420 || tc === 429)
+        ) {
+          message = `to many requests: ${message}`;
+        }
+
+        rateLimitStatus = NODE.addStatus({
+          color: 'red',
+          message
+        });
+        console.error(tw, tc);
+      });
+
+      stream.on('end', () => {
+        // console.log('end!');
+      });
+
+      stream.on('destroy', () => {
+        // console.log('destroy!');
+      });
+    });
+  }
+
+  /**
+   * Returns the user id's for a given list of screenNames.
+   * @param {*} twitter An authorized twitter-ng instance.
+   * @param {String} screenNames comma seperated list of screennames.
+   * @returns {Number[]} An array of user id's.
+   */
+  async function getUserIdsFromScreenNames(twitter, screenNames) {
+    return new Promise((resolve, reject) => {
+      twitter.get('/users/lookup.json', { screen_name: screenNames }, (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        resolve(data.map(user => user.id));
+      });
+    });
+  }
+
+  NODE.on('init', async (state) => {
     const type = NODE.data.type;
     if (!type) {
       return;
     }
 
-    twitterIn.getValues(state)
-    .then((twitters) => {
-      twitters.forEach((twitter) => {
-        if (!twitter) {
-          return;
-        }
+    const twitters = await twitterIn.getValues(state);
+    twitters.forEach(async (twitter) => {
+      if (!twitter) {
+        return;
+      }
 
-        let rateLimitStatus;
-        let rateLimitTrack = 0;
+      // fetch the user ids from the given follow names
+      if (!NODE.data.follow) {
+        setupStream(state, twitter, NODE.data.track);
+        return;
+      }
 
-        twitter.stream(type, {
-          track: NODE.data.track
-        }, (stream) => {
-          stream.on('data', (data) => {
-            state.set(NODE, {
-              tweet: data
-            });
-            triggerOut.trigger(state);
-          });
-
-          // indicates that we're exceeding the rate limit set on streaming data
-          // TODO: add orange status when this happens, including amount of missed tweets
-          stream.on('limit', (data) => {
-            // this data is not in sync, so only apply highest limit
-            if (data.track <= rateLimitTrack) {
-              return;
-            }
-            rateLimitTrack = data.track;
-
-            if (rateLimitStatus) {
-              NODE.updateStatusById(rateLimitStatus, {
-                color: 'orange',
-                message: `ratelimit; missed ${rateLimitTrack} tweets`
-              });
-            } else {
-              rateLimitStatus = NODE.addStatus({
-                color: 'orange',
-                message: `ratelimit; missed ${rateLimitTrack} tweets`
-              });
-            }
-          });
-
-          stream.on('error', (tw, tc) => {
-            let message = `${tw} ${tc}`;
-            if (
-              (tw === 'http' || tw === 'https') &&
-              (tc === 420 || tc === 429)
-            ) {
-              message = `to many requests: ${message}`;
-            }
-
-            rateLimitStatus = NODE.addStatus({
-              color: 'red',
-              message
-            });
-            console.error(tw, tc);
-          });
-
-          stream.on('end', () => {
-            console.log('end!');
-          });
-
-          stream.on('destroy', () => {
-            console.log('destroy!');
-          });
-        });
-      });
+      try {
+        const followUserIds = await getUserIdsFromScreenNames(twitter, NODE.data.follow);
+        setupStream(state, twitter, NODE.data.track, followUserIds.join(','));
+      } catch (err) {
+        NODE.error({
+          err
+        }, state);
+      }
     });
   });
 };

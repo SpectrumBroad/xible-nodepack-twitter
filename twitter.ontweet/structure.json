@@ -1,7 +1,7 @@
 {
   "name": "twitter.ontweet",
   "type": "event",
-  "description": "Triggered whenever a tweet comes in on the given search tags.",
+  "description": "Triggered whenever a tweet comes in on the given keywords or usernames to follow.",
   "inputs": {
     "twitter": {
   		"type": "twitter"

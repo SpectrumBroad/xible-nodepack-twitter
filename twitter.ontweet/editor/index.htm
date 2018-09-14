@@ -1,22 +1,12 @@
-<selectcontainer>
-	<select data-outputvalue="type">
-    <option value="statuses/filter" selected>public statuses</option>
-    <option value="user">user</option>
-  </select>
-</selectcontainer>
-<input type="text" data-outputvalue="track" placeholder="keywords" required="required" />
-<script>
-  const input = document.querySelector('input');
-  document.querySelector('select')
-  .addEventListener('change', function(event) {
-    switch(this.selectedIndex) {
-      case 0:
-        input.setAttribute('placeholder', 'keywords');
-      break;
-
-      case 1:
-        input.setAttribute('placeholder', 'username');
-      break;
-    }
-  });
-</script>
+<input
+  type="text"
+  data-output-value="track"
+  placeholder="keywords"
+  data-description="A comma-seperated list of keywords to track. This is used as a logical OR when used in combination with username following, as per the Twitter API definition."
+/>
+<input
+  type="text"
+  data-output-value="follow"
+  placeholder="follow"
+  data-description="A comma-seperated list of usernames to follow. This is used as a logical OR when used in combination with keyword tracking, as per the Twitter API definition."
+/>
