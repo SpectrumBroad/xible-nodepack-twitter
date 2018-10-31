@@ -105,11 +105,6 @@ module.exports = (NODE) => {
   }
 
   NODE.on('init', async (state) => {
-    const type = NODE.data.type;
-    if (!type) {
-      return;
-    }
-
     const twitters = await twitterIn.getValues(state);
     twitters.forEach(async (twitter) => {
       if (!twitter) {
