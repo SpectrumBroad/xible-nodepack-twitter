@@ -1,5 +1,5 @@
 # Description
-This is a nodepack for [XIBLE](https://xible.io), which provides Twitter functionaly.
+This is a nodepack for [XIBLE](https://xible.io), which provides Twitter functionality.
 
 # Requirements
 - [XIBLE](https://xible.io)

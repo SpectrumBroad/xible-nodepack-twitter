@@ -21,7 +21,8 @@ module.exports = (NODE) => {
         let errMessage;
         if (err.data) {
           errData = JSON.parse(err.data);
-          errMessage = errData && errData.errors && errData.errors.length && errData.errors[0].message;
+          errMessage = errData && errData.errors
+            && errData.errors.length && errData.errors[0].message;
 
           if (errMessage) {
             NODE.setTracker({
@@ -47,7 +48,7 @@ module.exports = (NODE) => {
 
   // return reference glow
   const twitterOut = NODE.getOutputByName('twitter');
-  twitterOut.on('trigger', async (conn, state) => {
+  twitterOut.on('trigger', async () => {
     if (twitter) {
       return twitter;
     }
@@ -60,8 +61,8 @@ module.exports = (NODE) => {
   NODE.on('init', () => {
     // if we have the oAuth keys, setup twitter right away
     if (
-      NODE.data.consumerKey && NODE.data.consumerSecret &&
-      NODE.data.accessToken && NODE.data.accessTokenSecret
+      NODE.data.consumerKey && NODE.data.consumerSecret
+      && NODE.data.accessToken && NODE.data.accessTokenSecret
     ) {
       connect();
     } else {

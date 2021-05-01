@@ -1,6 +1,6 @@
 {
 	"name": "xible-nodepack-twitter",
-	"version": "0.4.1",
+	"version": "0.5.0",
 	"description": "Twitter nodes for XIBLE",
   "license": "MIT",
   "repository": {
@@ -17,12 +17,12 @@
     "nodepack"
   ],
   "engines": {
-    "xible": ">=0.12.0"
+    "xible": ">=0.21.0"
   },
   "scripts": {
-    "prepublishOnly": "npm shrinkwrap --only=prod"
+    "prepublishOnly": "npm shrinkwrap"
   },
 	"dependencies": {
-		"twitter-ng": "*"
+		"twitter-ng": "^0.6.2"
 	}
 }

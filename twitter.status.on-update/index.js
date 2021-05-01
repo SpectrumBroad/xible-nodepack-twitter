@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (NODE) => {
-  const twitterIn = NODE.getInputByName('twitter');
+  const twittersIn = NODE.getInputByName('twitters');
 
   const triggerOut = NODE.getOutputByName('trigger');
   const tweetOut = NODE.getOutputByName('tweet');
@@ -20,7 +20,10 @@ module.exports = (NODE) => {
 
   userNameOut.on('trigger', async (conn, state) => {
     const thisState = state.get(NODE);
-    return (thisState && thisState.tweet && thisState.tweet.user && thisState.tweet.user.screen_name) || null;
+    return (
+      thisState && thisState.tweet
+      && thisState.tweet.user && thisState.tweet.user.screen_name
+    ) || null;
   });
 
   function setupStream(state, twitter, track, follow) {
@@ -62,8 +65,8 @@ module.exports = (NODE) => {
       stream.on('error', (tw, tc) => {
         let message = `${tw} ${tc}`;
         if (
-          (tw === 'http' || tw === 'https') &&
-          (tc === 420 || tc === 429)
+          (tw === 'http' || tw === 'https')
+          && (tc === 420 || tc === 429)
         ) {
           message = `to many requests: ${message}`;
         }
@@ -99,13 +102,13 @@ module.exports = (NODE) => {
           return;
         }
 
-        resolve(data.map(user => user.id));
+        resolve(data.map((user) => user.id));
       });
     });
   }
 
   NODE.on('init', async (state) => {
-    const twitters = await twitterIn.getValues(state);
+    const twitters = await twittersIn.getValues(state);
     twitters.forEach(async (twitter) => {
       if (!twitter) {
         return;
@@ -121,9 +124,7 @@ module.exports = (NODE) => {
         const followUserIds = await getUserIdsFromScreenNames(twitter, NODE.data.follow);
         setupStream(state, twitter, NODE.data.track, followUserIds.join(','));
       } catch (err) {
-        NODE.error({
-          err
-        }, state);
+        NODE.error(err, state);
       }
     });
   });

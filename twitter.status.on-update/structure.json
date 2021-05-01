@@ -1,9 +1,9 @@
 {
-  "name": "twitter.ontweet",
+  "name": "twitter.status.on-update",
   "type": "event",
-  "description": "Triggered whenever a tweet comes in on the given keywords or usernames to follow.",
+  "description": "Triggered whenever a status update (also known as tweet) comes in on the given keywords or usernames to follow.",
   "inputs": {
-    "twitter": {
+    "twitters": {
   		"type": "twitter"
   	}
   },

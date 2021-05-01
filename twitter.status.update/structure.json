@@ -1,0 +1,18 @@
+{
+  "name": "twitter.status.update",
+  "description": "Updates the authenticating user's current status, also known as Tweeting.",
+  "type": "action",
+  "inputs": {
+    "trigger": {
+      "type": "trigger"
+    },
+    "twitters": {
+      "type": "twitter"
+    }
+  },
+  "outputs": {
+    "done": {
+      "type": "trigger"
+    }
+  }
+}
